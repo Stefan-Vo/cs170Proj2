@@ -1,10 +1,11 @@
-import classifier
-import validator 
+from classifier import KNNClassifier
+from validator  import Validator
+import numpy as np
 
 def load_data(file_path):
     data = np.loadtxt(file_path)
-    X = data[:, [3, 5, 7]]  # Using features 3, 5, and 7
-    Y = data[:, 0]   # Class labels are in the first column
+    X = data[:, 1:]  # Assuming the first column is the label and the rest are features
+    Y = data[:, 0]   # Class labels are in the first columnass labels are in the first column
     return X, Y
 
 def normalize_features(X):
@@ -20,5 +21,10 @@ def main():
     X = normalize_features(X)
     knn = KNNClassifier(k=3)
 
-    accuracy = correct_predictions / float(total_samples)
+    validator = Validator(knn)
+    feature_subset = [2, 4, 6] #We ignore 1st column so feature 3 should be in column 2
+    accuracy = validator.validate(X, Y, feature_subset)
     print(f"Accuracy: {accuracy:.3f}")
+
+
+main()
