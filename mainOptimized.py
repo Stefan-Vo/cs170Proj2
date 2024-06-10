@@ -124,7 +124,6 @@ def main():
     X = normalize_features(X)
 
     start_time = time.time()
-    # Print accuracy with no features
     no_feature_accuracy = leave_one_out_validator(X, Y, [])
     print(f"\nUsing no features: {(no_feature_accuracy*100):.1f}%\n")
 
@@ -137,6 +136,6 @@ def main():
     elapsed_time = end_time - start_time
     print(f"Elapsed time: {elapsed_time:.2f} seconds\n")
 
-# Call the main function
 if __name__ == "__main__":
     main()
+
