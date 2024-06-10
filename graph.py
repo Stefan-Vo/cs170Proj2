@@ -1,5 +1,7 @@
 import itertools
 import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 from classifier import KNNClassifier
 from validator import Validator
 
@@ -68,7 +70,7 @@ def forwardElimination(X, Y):
         features = newFeatures
         size -= 1
     print(f"Finished search!! The best feature subset is {[f+1 for f in bestFeature]}, which has an accuracy of {bestAcc:.3f}%")
-    return 0
+    return list(bestFeature)
 
 def backwardsElimination(X, Y):
     print("Backward Elimination")
@@ -101,7 +103,28 @@ def backwardsElimination(X, Y):
         features = [set(combo) for combo in itertools.combinations(bestFeature, len(bestFeature) - 1)]
         num_features -= 1
     print(f"Finished search!! The best feature subset is {[f+1 for f in bestFeature]}, which has an accuracy of {bestAcc:.3f}%")
-    return 0
+    return list(bestFeature)
+
+def plot_features(X, Y, feature_subset):
+    if len(feature_subset) == 1:
+        plt.scatter(X[:, feature_subset[0]], Y)
+        plt.xlabel(f'Feature {feature_subset[0] + 1}')
+        plt.ylabel('Class Label')
+        plt.title('Feature vs Class Label')
+    elif len(feature_subset) == 2:
+        plt.scatter(X[:, feature_subset[0]], X[:, feature_subset[1]], c=Y)
+        plt.xlabel(f'Feature {feature_subset[0] + 1}')
+        plt.ylabel(f'Feature {feature_subset[1] + 1}')
+        plt.title('Feature Scatter Plot')
+    else:
+        # Using PCA to reduce to 2 dimensions for visualization
+        pca = PCA(n_components=2)
+        X_reduced = pca.fit_transform(X[:, feature_subset])
+        plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=Y)
+        plt.xlabel('Principal Component 1')
+        plt.ylabel('Principal Component 2')
+        plt.title('PCA of Selected Features')
+    plt.show()
 
 def main():
     print("Welcome to Group 8's Feature Selection Algorithm\n")
@@ -123,9 +146,12 @@ def main():
     print(f"\nUsing no features: {no_feature_accuracy:.3f}%\n")
 
     if alg == '1':
-        forwardElimination(X, Y)
+        best_features = forwardElimination(X, Y)
     elif alg == '2':
-        backwardsElimination(X, Y)
+        best_features = backwardsElimination(X, Y)
+    
+    if best_features:
+        plot_features(X, Y, best_features)
 
 # Call the main function
 main()
